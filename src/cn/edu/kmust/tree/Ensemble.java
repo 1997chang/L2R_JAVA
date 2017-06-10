@@ -21,14 +21,10 @@ import org.dom4j.io.SAXReader;
  */
 public class Ensemble {
     
-    private List<RegressionTree> trees = new ArrayList<>();
-    private List<Double> weights = new ArrayList<>();
-    
-    public static void main(String []args){
-        Ensemble ensemble=new Ensemble();
-        ensemble.readModelFile("LAMBDAMART-model.xml.T100.xml");
-        ensemble.readTrees();
-    }
+//    保存所有的决策树列表
+    private final List<RegressionTree> trees = new ArrayList<>();
+//    所有树的权重值
+    private final List<Double> weights = new ArrayList<>();
     
     /**
      * 根据一个XML文件得到一个ensemble森林
@@ -42,10 +38,10 @@ public class Ensemble {
             List trees_xml=root.selectNodes("//tree");
             for(Object obj:trees_xml){
                 Element tree = (Element) obj;
-                weights.add(Double.parseDouble(tree.attributeValue("weight")));
+                getWeights().add(Double.parseDouble(tree.attributeValue("weight")));
                 RegressionTree tree_root=new RegressionTree();
                 tree_root.createTree(tree.element("split"));
-                this.trees.add(tree_root);
+                this.getTrees().add(tree_root);
             }
         } catch (DocumentException ex) {
             Logger.getLogger(Ensemble.class.getName()).log(Level.SEVERE, null, ex);
@@ -56,11 +52,41 @@ public class Ensemble {
      * 用于验证一个XML文件是否正确读取
      */
     public void readTrees(){
-        for(int i=0;i<trees.size();i++){
-            RegressionTree regressionTree=trees.get(i);
+        for(int i=0;i<getTrees().size();i++){
+            RegressionTree regressionTree=getTrees().get(i);
             regressionTree.traversal();
-            System.out.println("当前树的权重为:"+weights.get(i));
+            System.out.println("当前树的权重为:"+getWeights().get(i));
             System.out.println("************************************************");
         }
+    }
+    
+    /**
+     * 返回一个文档集在森林中的得分
+     * @param features 文档集的特征值集合
+     * @return 各个文档的最后得分
+     */
+    public double[] getScores(List<List<Float>> features){
+        double []result=new double[features.size()];
+        for(int i=0;i<getTrees().size();i++){
+            RegressionTree regressionTree=getTrees().get(i);
+            for(int j=0;j<features.size();j++){
+                result[j]+=regressionTree.travesal(features.get(j))*getWeights().get(i);
+            }
+        }
+        return result;
+    }
+    
+        /**
+     * @return the trees
+     */
+    public List<RegressionTree> getTrees() {
+        return trees;
+    }
+
+    /**
+     * @return the weights
+     */
+    public List<Double> getWeights() {
+        return weights;
     }
 }

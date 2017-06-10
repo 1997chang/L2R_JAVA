@@ -14,10 +14,25 @@ import org.dom4j.Element;
  */
 public class RegressionTree {
     
+    /**
+     * 当前节点的左子树对象
+     */
     private RegressionTree left =null;
+    /**
+     * 当前节点的右子树对象
+     */
     private RegressionTree right =null;
+    /**
+     * 叶子节点的输出值
+     */
     private double avgLabel=0.0;
-    private double threshold=0.0;
+    /**
+     * 阈值
+     */
+    private float threshold=0.0f;
+    /**
+     * 要和哪一个特征进行比较。这里的feature_id是从0开始计算的。所以是文档特征下标的数字-1
+     */
     private int feature_id=-1;
     
     /**
@@ -27,8 +42,8 @@ public class RegressionTree {
     public void createTree(Element split){
         //是一个分支节点
         if(split.element("feature")!=null){
-            feature_id=Integer.parseInt(split.element("feature").getTextTrim());
-            threshold=Double.parseDouble(split.element("threshold").getTextTrim());
+            feature_id=Integer.parseInt(split.element("feature").getTextTrim())-1;
+            threshold=Float.parseFloat(split.element("threshold").getTextTrim());
             List childs=split.elements("split");
             for(Object obj:childs){
                 Element child =(Element) obj;
@@ -47,7 +62,7 @@ public class RegressionTree {
     }
     
     /**
-     * 遍历一颗树
+     * 遍历一颗树，输出各个值
      */
     public void traversal(){
         if(left==null&&right==null){
@@ -63,6 +78,22 @@ public class RegressionTree {
                 System.out.println("当前节点的右节点:");
                 right.traversal();
             }
+        }
+    }
+    
+    /**
+     * 根据一个文档的特征序列,返回这个文档对应叶子的输出值（在一个树上）
+     * @param feature
+     * @return 一棵树的输出值
+     */
+    public double travesal(List<Float> feature){
+        if(left==null&&right==null){
+            return avgLabel;
+        }
+        if(feature.get(feature_id)<=threshold){
+            return left.travesal(feature);
+        }else{
+            return right.travesal(feature);
         }
     }
     

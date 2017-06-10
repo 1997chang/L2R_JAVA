@@ -19,22 +19,41 @@ import java.util.logging.Logger;
  * @author Administrator
  */
 public class Dataset {
-    
+
     /**
-    文档对的个数
+     * 文档对的个数
     */
     private int max_instances=0;
     /**
      * 特征值的个数
      */
     private int num_features=0;
+    /**
+     * 每一个查询的第一个文档的开始下标位置，从0开始计算
+     */
     private final List<Integer> offset_ = new ArrayList<>();
+    /**
+     * 每一个查询文档对的标签
+     */
     private final List<Integer> Label_ = new ArrayList<>();
-    private final List<List<Double>> data_ =new ArrayList<>();
+    /**
+     * 查询文档对的特征值向量的集合
+     */
+    private final List<List<Float>> data_ =new ArrayList<>();
+    /**
+     * 查询的个数
+     */
     private int num_queries=0;
+    /**
+     * 用于上一查询的qid后面的编号值
+     */
     private int last_instance_id_=-1;
     private int num_instances_;
     
+    /**
+     * 从文件中得到数据集
+     * @param fileName 数据集文件名
+     */
     public void read_datascource(String fileName){
         FileReader fileReader =null;
         BufferedReader bufferedReader =null;
@@ -46,7 +65,7 @@ public class Dataset {
                 //存放标签
                 Integer Label;
                 //存放特征值
-                List<Double> feature =new ArrayList<>();
+                List<Float> feature =new ArrayList<>();
                 //存放qid的值
                 Integer qid;
                 readLine=readLine.trim();
@@ -70,7 +89,7 @@ public class Dataset {
                         throw new RuntimeException("没有包含qid的选项");
                     }
                     for(int i=2;i<fs.length;i++){
-                        feature.add(Double.parseDouble(getValue(fs[i])));
+                        feature.add(Float.parseFloat(getValue(fs[i])));
                     }
                     int current_features=Integer.parseInt(getKey(fs[fs.length-1]));
                     if(current_features>num_features){
@@ -87,7 +106,7 @@ public class Dataset {
                 }
                 max_instances++;
                 Label_.add(Label);
-                data_.add(feature);
+                getData_().add(feature);
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Dataset.class.getName()).log(Level.SEVERE, null, ex);
@@ -109,11 +128,28 @@ public class Dataset {
         }
     }
     
+    /**
+     * 得到[:]后的值
+     * @param pair Key：Value对
+     * @return  返回value值
+     */
     private String getValue(String pair){
         return pair.split(":")[1];
     }
     
+    /**
+     * 得到[:]前的值
+     * @param pair Key：Value对
+     * @return 返回Key值
+     */
     private String getKey(String pair){
         return pair.split(":")[0];
+    }
+    
+    /**
+     * @return the data_
+     */
+    public List<List<Float>> getData_() {
+        return data_;
     }
 }
