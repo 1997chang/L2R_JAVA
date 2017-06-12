@@ -31,19 +31,18 @@ public class StructPlus {
     
     /**
      * 返回特征向量的叶子节点
-     * @param node 当前某个节点（一开始是决策树的根节点）
      * @param featureVector 一篇文档的特征数组
      * @return 最后到达的叶子节点
      */
     public StructPlus getLeaf(float[] featureVector){
         //达到叶子节点，就返回
-        if(this.left==null&&this.right==null){
+        if(this.getLeft()==null&&this.getRight()==null){
             return this;
         }
-        if(featureVector[this.feature_id]<=this.getThreshold()){
-            return this.left.getLeaf(featureVector);
+        if(featureVector[this.getFeature_id()]<=this.getThreshold()){
+            return this.getLeft().getLeaf(featureVector);
         }else{
-            return this.right.getLeaf(featureVector);
+            return this.getRight().getLeaf(featureVector);
         }
     }
     
@@ -79,7 +78,7 @@ public class StructPlus {
         if(root==null){
             return 0;
         }else{
-            return 1+countNodes(root.left)+countNodes(root.right);
+            return 1+countNodes(root.getLeft())+countNodes(root.getRight());
         }
         
     }
@@ -101,17 +100,17 @@ public class StructPlus {
     private static int compressNodes(StructPlus []tree_new,StructPlus tree_old,int index){
         tree_new[index]=new StructPlus();
         tree_new[index].id=tree_old.id;
-        tree_new[index].feature_id=tree_old.feature_id;
+        tree_new[index].feature_id=tree_old.getFeature_id();
         tree_new[index].threshold=tree_old.getThreshold();
-        if(tree_old.right!=null||tree_old.left!=null){
+        if(tree_old.getRight()!=null||tree_old.getLeft()!=null){
             //用于保存当前节点的下标值
             int pindex=index;
             //返回最后一个已用的下标值
-            index=compressNodes(tree_new, tree_old.left, index+1);
+            index=compressNodes(tree_new, tree_old.getLeft(), index+1);
             tree_new[pindex].left=tree_new[pindex+1];
             //保存右孩子的下标值
             int right=index+1;
-            index=compressNodes(tree_new, tree_old.right, index+1);
+            index=compressNodes(tree_new, tree_old.getRight(), index+1);
             tree_new[pindex].right=tree_new[right];
         }
         return index;
@@ -128,20 +127,41 @@ public class StructPlus {
      * 遍历一颗树，输出各个值,以判断读取文件是否正确
      */
     public void printtree(){
-        if(left==null&&right==null){
-            System.out.println("this left value is :"+threshold);
+        if(getLeft()==null&&getRight()==null){
+            System.out.println("this left value is :"+getThreshold());
         }else{
-            System.out.println("当前节点feature为:"+feature_id);
-            System.out.println("当前节点的阈值为:"+threshold);
-            if(left!=null){
+            System.out.println("当前节点feature为:"+getFeature_id());
+            System.out.println("当前节点的阈值为:"+getThreshold());
+            if(getLeft()!=null){
                 System.out.println("当前节点的左节点:");
-                left.printtree();
+                getLeft().printtree();
             }
-            if(right!=null){
+            if(getRight()!=null){
                 System.out.println("当前节点的右节点:");
-                right.printtree();
+                getRight().printtree();
             }
         }
+    }
+    
+    /**
+     * @return the feature_id
+     */
+    public int getFeature_id() {
+        return feature_id;
+    }
+
+    /**
+     * @return the right
+     */
+    public StructPlus getRight() {
+        return right;
+    }
+
+    /**
+     * @return the left
+     */
+    public StructPlus getLeft() {
+        return left;
     }
     
 }
