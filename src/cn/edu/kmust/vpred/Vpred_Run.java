@@ -44,6 +44,7 @@ public class Vpred_Run {
         vpred_Run.featureFilePath="dataset/msn-5k/v_test.txt";
         vpred_Run.modelFilePath="model/Vpred-ensemble-model.txt";
         vpred_Run.getScore_1();
+//        System.out.println(Boolean.compare(false, false));
     }
     
     public void getScore_1(){
