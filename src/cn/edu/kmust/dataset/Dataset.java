@@ -50,11 +50,16 @@ public class Dataset {
     private int last_instance_id_=-1;
     private int num_instances_;
     
+    private final List<Float> data=new ArrayList<>();
+    
     /**
      * 从文件中得到数据集
      * @param fileName 数据集文件名
+     * @param fileType 数据集文件类型（testing，training，validation）
      */
-    public void read_datascource(String fileName){
+    public void read_datascource(String fileName,String fileType){
+        System.out.println("Reading "+fileType+" dataset :"+fileName);
+        long time_begin = System.nanoTime();
         FileReader fileReader =null;
         BufferedReader bufferedReader =null;
         try {
@@ -100,7 +105,7 @@ public class Dataset {
                     continue;
                 }
                 if(last_instance_id_!=qid){
-                    offset_.add(max_instances);
+                    offset_.add(getMax_instances());
                     last_instance_id_=qid;
                     num_queries++;
                 }
@@ -108,6 +113,7 @@ public class Dataset {
                 Label_.add(Label);
                 getData_().add(feature);
             }
+            offset_.add(getMax_instances());
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Dataset.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -124,6 +130,14 @@ public class Dataset {
                 }
             } catch (IOException ex) {
                 Logger.getLogger(Dataset.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        long time_end= System.nanoTime();
+        System.out.println("published load dataset file from "+fileName);
+        System.out.println("reading time is "+(time_end-time_begin)+" (ns)");
+        for(int i=0;i<data_.size();i++){
+            for(int j=0;j<data_.get(i).size();j++){
+                getData().add(data_.get(i).get(j));
             }
         }
     }
@@ -151,5 +165,38 @@ public class Dataset {
      */
     public List<List<Float>> getData_() {
         return data_;
+    }
+    
+    public List<Float> getData_i(int i){
+        return data_.get(i);
+    }
+
+    /**
+     * @return the data
+     */
+    public List<Float> getData() {
+        return data;
+    }
+    
+        /**
+     * @return the max_instances
+     */
+    public int getMax_instances() {
+        return max_instances;
+    }
+
+    public int getFeatureSize() {
+        return num_features;
+    }
+
+    /**
+     * @return the num_queries
+     */
+    public int getNum_queries() {
+        return num_queries;
+    }
+    
+    public int offset(int i){
+        return offset_.get(i);
     }
 }

@@ -41,7 +41,7 @@ public class Vpred_Run {
     
     public static void main(String []args){
         Vpred_Run vpred_Run=new Vpred_Run();
-        vpred_Run.featureFilePath="dataset/msn-5k/v_test.txt";
+        vpred_Run.featureFilePath="dataset/msn-5k/v_test1.txt";
         vpred_Run.modelFilePath="model/Vpred-ensemble-model.txt";
         vpred_Run.getScore_1();
 //        System.out.println(Boolean.compare(false, false));
@@ -236,9 +236,9 @@ public class Vpred_Run {
         System.out.println(rounds_num+" rounds Tatal Time: "+time_total+" ns");
         System.out.println("per rounds Tatal Time: "+(time_total/rounds_num)+" ns");
         System.out.println("per instance total time:"+(time_total/rounds_num/numberOfInstances) +"ns");
-        for(int i=0;i<numberOfInstances;i++){
-            System.out.println(score[i]);
-        }
+//        for(int i=0;i<numberOfInstances;i++){
+//            System.out.println(score[i]);
+//        }
     }
     
 }

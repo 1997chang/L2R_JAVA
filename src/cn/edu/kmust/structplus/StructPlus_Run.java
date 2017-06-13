@@ -38,7 +38,7 @@ public class StructPlus_Run {
     public static void main(String []args){
         
         StructPlus_Run structPlus_Run=new StructPlus_Run();
-        structPlus_Run.featureFilePath="dataset/msn-5k/v_test.txt";
+        structPlus_Run.featureFilePath="dataset/msn-5k/v_test1.txt";
         structPlus_Run.modelFilePath="model/Vpred-ensemble-model.txt";
         structPlus_Run.getScore_1();
     }
@@ -217,8 +217,8 @@ public class StructPlus_Run {
         System.out.println("per instance total time:"+(time_total/rounds_num/numberOfInstances) +"ns");
         
         
-        for(int i=0;i<score.length;i++){
-            System.out.println(score[i]);
-        }
+//        for(int i=0;i<score.length;i++){
+//            System.out.println(score[i]);
+//        }
     }
 }

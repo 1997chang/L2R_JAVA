@@ -97,4 +97,9 @@ public class RegressionTree {
         }
     }
     
+    public double score_instance(List<Float> feature){
+        double score=feature_id==-1?avgLabel:(feature.get(feature_id)<=threshold?left.score_instance(feature):right.score_instance(feature));
+        return score;
+    }
+    
 }
