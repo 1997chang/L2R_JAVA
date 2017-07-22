@@ -59,7 +59,8 @@ public class StructPlus {
         this.id=id;
         this.feature_id=featureid;
         this.threshold=threshold;
-        
+        this.left=null;
+        this.right=null;
     }
     
     public long getId(){
@@ -74,6 +75,11 @@ public class StructPlus {
         this.right=right;
     }
     
+    /**
+     * 用于计算以这个root为根节点的树中，有多少个叶子节点
+     * @param root 以root为根节点的树
+     * @return 一共有多少个节点
+     */
     private static int countNodes(StructPlus root){
         if(root==null){
             return 0;
@@ -83,19 +89,26 @@ public class StructPlus {
         
     }
     
-    public static StructPlus[] compress(StructPlus []root){
-        int validNodes=countNodes(root[0]);
+    /**
+     * 
+     * @param root
+     * @return 
+     */
+    public static StructPlus[] compress(StructPlus root){
+        //这棵树中一共有多少个节点
+        int validNodes=countNodes(root);
         StructPlus []tree=new StructPlus[validNodes];
-        compressNodes(tree, root[0], 0);
+        compressNodes(tree, root, 0);
         return tree;
     }
     
     /**
+     * 将一棵树以TLR的方式放入到一个新的数组中
      * 返回最后一个已用的下标值
      * @param tree_new 新树的数组
      * @param tree_old 旧树的根节点
      * @param index 当前节点的下标值
-     * @return 返回下一个可用的下标值
+     * @return 返回最后一个节点使用的下标号
      */
     private static int compressNodes(StructPlus []tree_new,StructPlus tree_old,int index){
         tree_new[index]=new StructPlus();
@@ -105,7 +118,7 @@ public class StructPlus {
         if(tree_old.getRight()!=null||tree_old.getLeft()!=null){
             //用于保存当前节点的下标值
             int pindex=index;
-            //返回最后一个已用的下标值
+            //返回最后一个已用的下标值（当前节点左子树中最后一个节点使用的下标号）
             index=compressNodes(tree_new, tree_old.getLeft(), index+1);
             tree_new[pindex].left=tree_new[pindex+1];
             //保存右孩子的下标值
